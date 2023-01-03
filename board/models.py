@@ -2,10 +2,11 @@ from datetime import datetime
 
 from django.db import models
 
+#이미지 저장 경로 지정 함수
 def user_directory_path(instance,filename):
     name=instance.date.strftime("%Y-%m-%d-%H:%M:%S")+filename.split('.')[-1]
     return 'image/{0}/{1}.jpg'.format(instance.user_key,name)
-# Create your models here.
+
 class Board(models.Model):
     key=models.AutoField(db_column='key',primary_key=True)
     title=models.CharField(db_column='title',max_length=100)

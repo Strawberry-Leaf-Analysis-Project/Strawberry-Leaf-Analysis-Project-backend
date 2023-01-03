@@ -75,9 +75,11 @@ def board_detail(request,key):
 
     #이미지 삽입도 나중에 확인해봐야함
     rs = Board.objects.get(key=key)
+    rsQuery=Board.objects.filter(key=key)
     user= Member.objects.get(key=rs.user_key)
-    rs.views=rs.views+1
-    #rs.save()
+    #rs.views=rs.views+1
+    #rs.image.save()
+    rsQuery.update(views=rs.views+1)
 
     context={}
     str=bytes.decode(rs.image)
