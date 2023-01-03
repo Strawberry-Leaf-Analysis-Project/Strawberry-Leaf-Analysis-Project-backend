@@ -7,6 +7,7 @@ class Board(models.Model):
     explain = models.CharField(db_column='explain', max_length=500)
     user_key=models.IntegerField(db_column='user_key')
     image = models.CharField(db_column='image',max_length=1000)
+    ##
     #result = models.ImageField(db_column='result')
     date=models.DateTimeField(db_column='date')
     views=models.IntegerField(db_column='views')
