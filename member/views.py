@@ -35,7 +35,7 @@ def member_insert(request):
     rs=Member.objects.create(id=memid,password=mempwd,name=memname,
                             visited='0',is_staff='0')
 
-    os.mkdir("media/image/"+memid)
+    os.mkdir("media/image/"+rs.key)
     context['result_msg'] = '회원가입되었습니다. Home에서 로그인해주세요'
 
     return JsonResponse(context, content_type="application/json")

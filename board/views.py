@@ -31,7 +31,7 @@ def board_home(request):
     context['key'] = request.session['key']
     context['name'] = request.session['name']
 
-    rsBoard=Board.objects.all()
+    rsBoard=Board.objects.filter(is_delete='0')
 
     return render(request,"boardForm.html",{
         'context':context,'rsBoard':rsBoard})
@@ -49,7 +49,10 @@ def board_newWrite(request):
     atitle = request.POST['title']
     aexplain = request.POST['explain']
     userkey = request.POST['key']
+    uploaded_file = request.FILES['ufile']
 
+    '''
+    이름 변경 및 저장(static 방식)
     user=Member.objects.get(key=userkey)
     name_date = str(datetime.datetime.today().year) + '_' + str(datetime.datetime.today().month) + '_' + str(
         datetime.datetime.today().day)
@@ -62,9 +65,9 @@ def board_newWrite(request):
     fs = FileSystemStorage(location='media/image/'+user.id)
 
     name = fs.save(name_new + name_ext, uploaded_file)
-
-    rows = Board.objects.create(title=atitle, explain=aexplain, image=name,user_key=userkey,
-                                views='0',like='0',date=datetime.datetime.now())
+    '''
+    rows = Board.objects.create(title=atitle, explain=aexplain, image=uploaded_file,user_key=userkey,
+                                views='0',like='0',date=datetime.datetime.now(),is_delete='0')
 
     return redirect('/board')
 
@@ -74,6 +77,11 @@ def board_detail(request,key):
     rs = Board.objects.get(key=key)
     user= Member.objects.get(key=rs.user_key)
     rs.views=rs.views+1
-    rs.save()
+    #rs.save()
 
-    return render(request,"boardDetail.html",{'data':rs,'user':user})
+    context={}
+    str=bytes.decode(rs.image)
+    source = str.split('/')
+    context['filename']=source[-1]
+
+    return render(request,"boardDetail.html",{'data':rs,'user':user,'file':context})

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-{% load static %}
 제목<br>
 {{data.title}}
 <br>
@@ -13,8 +13,12 @@
 {{data.explain}}
 조회수<br>
 {{data.views}}
-
+{{data.image}}
 이미지<br>
-
+  <img src="/media/image/{{user.key}}/{{file.filename}}" width="1280",height="715">
+<!-- 왜 이미지 안됨?
+<img src="{{data.image.url}}" width="1280",height="715">
+-->
+<br>
 </body>
 </html>

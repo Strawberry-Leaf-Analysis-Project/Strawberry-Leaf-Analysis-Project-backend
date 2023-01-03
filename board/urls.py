@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('',views.home,name="home"),
@@ -7,4 +9,4 @@ urlpatterns = [
     path('board_write',views.board_write,name="board_write"),
     path('board_newWrite',views.board_newWrite,name="board_newWrite"),
     path('board_detail/<int:key>',views.board_detail,name="board_detail")
-]
+] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
