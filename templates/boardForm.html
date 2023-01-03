@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style type="text/css">
+        thead {
+            background-color:#cecece;
+        }
+
+        .content {
+            max-width:500px;
+            margin: auto;
+            padding:10px;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        .board {
+            width: 100%
+        }
+
+        .even_bgcolor {
+            background-color:#e8efff;
+        }
+    </style>
+<body>
+    <div class="content">
+        <div class="header">
+            <h2>생장 게시판</h2>
+        </div>
+        <div style="text-align:right">
+            <a href="/board_write">글쓰기</a>
+        </div>
+        유저 전달 확인용: {{context.name}}
+        <table class="board">
+            <thead>
+                <tr class="header">
+                    <th style="width:10%;">순번</th>
+                    <th style="width:60%">제목</th>
+                    <th style="width:30%">작성일자</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if rsBoard %}
+                {% for data in rsBoard %}
+                <tr class="{% if forloop.counter|divisibleby:2 %}even_bgcolor{% endif %}">
+                    <td style="text-align:center;">{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{%url 'board_detail' data.key %}">{{ data.title }}</a>
+                    </td>
+                    <td>{{ data.date|date:'Y-m-d' }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                   작성된 게시글이 없습니다.
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

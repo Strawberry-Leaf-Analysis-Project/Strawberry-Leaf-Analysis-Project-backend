@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<head>
+  <script LANGUAGE="JavaScript">
+
+  function getCookie(name){
+    var cookieValue = null;
+    if(document.cookie && document.cookie !==''){
+      var cookies = document.cookie.split(';');
+      for (var i=0;i<cookies.length;i++){
+        var cookie =jQuery.trim(cookies[i]);
+
+        if(cookie.substring(0,name.length+1)===(name+'=')){
+          cookieValue=decodeURIComponent(cookie.substring(name.length+1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  var csrftoken=getCookie('csrftoken');
+
+  function registerMember(){
+    memberid=document.getElementById("id").value;
+    if(memberid ==""){
+      alert("아이디가 비었습니다.");
+      document.getElementById("id").focus();
+      return false;
+    }
+
+    memberpwd=document.getElementById("password").value;
+    if(memberpwd ==""){
+      alert("비밀번호가 비었습니다.");
+      document.getElementById("password").focus();
+      return false;
+    }
+
+    memberpwd2=document.getElementById("password2").value;
+    if(memberpwd2 ==""){
+      document.getElementById("password2").focus();
+      return false;
+    }
+
+    if(memberpwd!=memberpwd2){
+      alert("비밀번호가 일치하지않습니다.");
+      document.getElementById("password2").focus();
+      return false;
+    }
+
+    membername=document.getElementById("name").value;
+    if(membername ==""){
+      alert("이름이 비었습니다.");
+      document.getElementById("name").focus();
+      return false;
+    }
+
+    idchk=document.getElementById("idcheck").value;
+
+    if(idchk!="1"){
+      alert("아이디 중복체크를 해주세요.");
+      return false;
+    }
+
+    var strurl="member_insert?id=" +memberid+"&password="+memberpwd+"&name="+membername;
+    //alert(strurl);
+    //return false;
+
+    xhr= new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4){
+        var data = xhr.responseText;
+
+        var obj = JSON.parse(data);
+        alert(obj.result_msg);
+        location.href="/";
+      }
+    };
+
+    xhr.open("POST",strurl);
+    xhr.setRequestHeader("X-CSRFToken",csrftoken);
+    xhr.send(null);
+  }
+
+  function checkId(){
+    memberid=document.getElementById("id").value;
+    if(memberid ==""){
+      alert("아이디가 비었습니다.");
+      document.getElementById("id").focus();
+      return false;
+    }
+
+
+    var strurl="member_idcheck?id=" +memberid;
+    //alert(strurl);
+    //return false;
+
+    xhr= new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4){
+        var data = xhr.responseText;
+
+        var obj = JSON.parse(data);
+         if(obj.flag=="1"){
+          alert(obj.result_msg);
+          document.getElementById("id").focus();
+        }
+        else{
+          alert(obj.result_msg);
+          document.getElementById("idcheck").value="1";
+          document.getElementById("id").disabled;
+        }
+      }
+    };
+
+    xhr.open("POST",strurl);
+    xhr.setRequestHeader("X-CSRFToken",csrftoken);
+    xhr.send(null);
+  }
+  </script>
+</head>
+<body>
+<div class="container">
+  <input type="hidden" id="idcheck" value="0"/>
+  <div class="form-group">
+    <td>
+      <label for="id">아이디</label>
+      <input type="text" id="id" name="id" placeholder="아이디">
+      <button onclick="checkId()">중복확인</button>
+    </td>
+    <td>
+      <label for="password">비밀번호</label>
+      <input type="text" id="password" name="password" placeholder="비밀번호">
+    </td>
+    <td>
+      <label for="password">비밀번호 확인</label>
+      <input type="text" id="password2" name="password2" placeholder="비밀번호">
+    </td>
+    <td>
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" placeholder="이름">
+    </td>
+  </div>
+  <button onclick="registerMember()">가입</button>
+</div> <!-- /container -->
+</body>
+</html>
