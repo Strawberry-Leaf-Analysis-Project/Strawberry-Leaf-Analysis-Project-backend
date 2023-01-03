@@ -30,11 +30,11 @@
 <body>
     <div class="content">
         <div class="header">
-            <h2>생장 게시판</h2>
+            <h2>나의 생장일지</h2>
         </div>
         <div style="text-align:right">
             <form action="/board_write" id="page",method="post">
-                <input type="hidden" name="flag" id="flag" value=0>
+                <input type="hidden" name="flag" id="flag" value=1>
                 <input type="submit" value="글쓰기" id="">
             </form>
         </div>
@@ -48,12 +48,12 @@
                 </tr>
             </thead>
             <tbody>
-            {% if viewsBoard %}
-                {% for data in viewsBoard %}
+            {% if rsBoard %}
+                {% for data in rsBoard %}
                 <tr class="{% if forloop.counter|divisibleby:2 %}even_bgcolor{% endif %}">
                     <td style="text-align:center;">{{ forloop.counter }}</td>
                     <td>
-                        <a href="{%url 'board_detail' key=data.key flag=0 %}">{{ data.title }}</a>
+                        <a href="{%url 'board_detail' key=data.key flag=1 %}">{{ data.title }}</a>
                     </td>
                     <td>{{ data.date|date:'Y-m-d' }}</td>
                 </tr>

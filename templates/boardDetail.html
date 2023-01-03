@@ -1,9 +1,109 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <script LANGUAGE="JavaScript">
+
+  function getCookie(name){
+    var cookieValue = null;
+    if(document.cookie && document.cookie !==''){
+      var cookies = document.cookie.split(';');
+      for (var i=0;i<cookies.length;i++){
+        var cookie =jQuery.trim(cookies[i]);
+
+        if(cookie.substring(0,name.length+1)===(name+'=')){
+          cookieValue=decodeURIComponent(cookie.substring(name.length+1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  var csrftoken=getCookie('csrftoken');
+
+  function deleteBoard(){
+
+    memberpwd=document.getElementById("password").value;
+    if(memberpwd ==""){
+      alert("비밀번호가 비었습니다.");
+      document.getElementById("password").focus();
+      return false;
+    }
+
+    memberpwd2=document.getElementById("password2").value;
+    if(memberpwd2 ==""){
+      document.getElementById("password2").focus();
+      return false;
+    }
+
+    if(memberpwd!=memberpwd2){
+      alert("비밀번호가 일치하지않습니다.");
+      document.getElementById("password2").focus();
+      return false;
+    }
+
+    memberkey=document.getElementById("key").value;
+
+    var strurl="member_changePassword?key=" +memberkey+"&password="+memberpwd;
+    //alert(strurl);
+    //return false;
+
+    xhr= new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4){
+        var data = xhr.responseText;
+
+        var obj = JSON.parse(data);
+        alert(obj.result_msg);
+        location.href="/";
+      }
+    };
+
+    xhr.open("POST",strurl);
+    xhr.setRequestHeader("X-CSRFToken",csrftoken);
+    xhr.send(null);
+  }
+
+  function changeName(){
+    membername=document.getElementById("name").value;
+    if(membername ==""){
+      alert("이름이 비었습니다.");
+      document.getElementById("name").focus();
+      return false;
+    }
+
+    memberkey=document.getElementById("key").value;
+
+    var strurl="member_changeName?key=" +memberkey+"&name="+membername;
+    //alert(strurl);
+    //return false;
+
+    xhr= new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4){
+        var data = xhr.responseText;
+
+        var obj = JSON.parse(data);
+
+        if(obj.flag=='1'){
+          alert(obj.result_msg);
+        }
+        else{
+          alert(obj.result_msg);
+          location.href="/";
+        }
+      }
+    };
+
+    xhr.open("POST",strurl);
+    xhr.setRequestHeader("X-CSRFToken",csrftoken);
+    xhr.send(null);
+  }
+
+  function test(){
+    alert("this is test")
+  }
+  </script>
 </head>
 <body>
 제목<br>
@@ -13,9 +113,18 @@
 {{data.explain}}
 조회수<br>
 {{data.views}}
-{{data.image}}
+<br>
+{% if context.key == user.key %}
+<!--
+    <input type="hidden" name="key" id="key" value={{data.key}}>
+    -->
+    <button onclick="">수정</button>
+    <button onclick="location.href='{%url 'board_delete' key=data.key flag=context.flag %}' ">삭제</button>
+
+{% endif %}
+
 이미지<br>
-  <img src="/media/image/{{user.key}}/{{file.filename}}" width="1280",height="715">
+  <img src="/media/image/{{user.key}}/{{context.filename}}" width="1280",height="715">
 <!-- 왜 이미지 안됨?
 <img src="{{data.image.url}}" width="1280",height="715">
 -->

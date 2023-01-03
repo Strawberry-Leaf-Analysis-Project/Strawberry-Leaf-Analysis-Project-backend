@@ -44,6 +44,7 @@ def board_write(request):
 
     context['key'] = request.session['key']
     context['name'] = request.session['name']
+    context['flag'] = request.GET['flag']
 
     return render(request,"boardWriteForm.html",context)
 
@@ -53,6 +54,7 @@ def board_newWrite(request):
     aexplain = request.POST['explain']
     userkey = request.POST['key']
     uploaded_file = request.FILES['ufile']
+    flag=request.POST['flag']
 
     '''
     이름 변경 및 저장(static 방식)
@@ -72,9 +74,12 @@ def board_newWrite(request):
     rows = Board.objects.create(title=atitle, explain=aexplain, image=uploaded_file,user_key=userkey,
                                 views='0',like='0',date=datetime.datetime.now(),is_delete='0')
 
-    return redirect('/board')
+    if flag == '0':
+        return redirect('/board')
+    else:
+        return redirect('/personal_board')
 
-def board_detail(request,key):
+def board_detail(request,key,flag):
 
     #이미지 삽입도 나중에 확인해봐야함
     rs = Board.objects.get(key=key)
@@ -86,5 +91,27 @@ def board_detail(request,key):
     str=bytes.decode(rs.image)
     source = str.split('/')
     context['filename']=source[-1]
+    context['key']=request.session['key']
+    context['flag']=flag
+    return render(request,"boardDetail.html",{'data':rs,'user':user,'context':context})
 
-    return render(request,"boardDetail.html",{'data':rs,'user':user,'file':context})
+def board_delete(request,key,flag):
+    rsQuery = Board.objects.filter(key=key)
+    rsQuery.update(is_delete=1)
+
+    if flag == 0:
+        return redirect('/board')
+    else:
+        return redirect('/personal_board')
+def personalBoard_home(request):
+    context={}
+
+    user_key=request.session['key']
+    context['key'] = user_key
+    context['name'] = request.session['name']
+
+    rsBoard=Board.objects.filter(is_delete='0',user_key=user_key)
+
+
+    return render(request,"personalBoardForm.html",{
+        'context':context,'rsBoard':rsBoard})
