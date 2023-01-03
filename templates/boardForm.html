@@ -45,8 +45,8 @@
                 </tr>
             </thead>
             <tbody>
-            {% if rsBoard %}
-                {% for data in rsBoard %}
+            {% if viewsBoard %}
+                {% for data in viewsBoard %}
                 <tr class="{% if forloop.counter|divisibleby:2 %}even_bgcolor{% endif %}">
                     <td style="text-align:center;">{{ forloop.counter }}</td>
                     <td>

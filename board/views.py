@@ -32,9 +32,12 @@ def board_home(request):
     context['name'] = request.session['name']
 
     rsBoard=Board.objects.filter(is_delete='0')
+    rsLatest = Board.objects.filter(is_delete='0').order_by('-date')
+    rsLikes = Board.objects.filter(is_delete='0').order_by('-like')
+    rsViews = Board.objects.filter(is_delete='0').order_by('-views')
 
     return render(request,"boardForm.html",{
-        'context':context,'rsBoard':rsBoard})
+        'context':context,'rsBoard':rsBoard,'latestBoard':rsLatest,'likesBoard':rsLikes,'viewsBoard':rsViews})
 
 def board_write(request):
     context={}
@@ -77,8 +80,6 @@ def board_detail(request,key):
     rs = Board.objects.get(key=key)
     rsQuery=Board.objects.filter(key=key)
     user= Member.objects.get(key=rs.user_key)
-    #rs.views=rs.views+1
-    #rs.image.save()
     rsQuery.update(views=rs.views+1)
 
     context={}
