@@ -83,14 +83,10 @@ def board_detail(request,key,flag):
 
     #이미지 삽입도 나중에 확인해봐야함
     rs = Board.objects.get(key=key)
-    rsQuery=Board.objects.filter(key=key)
     user= Member.objects.get(key=rs.user_key)
-    rsQuery.update(views=rs.views+1)
-
+    rs.views=rs.views+1
+    rs.save()
     context={}
-    str=bytes.decode(rs.image)
-    source = str.split('/')
-    context['filename']=source[-1]
     context['key']=request.session['key']
     context['flag']=flag
     return render(request,"boardDetail.html",{'data':rs,'user':user,'context':context})

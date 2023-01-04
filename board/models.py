@@ -8,21 +8,21 @@ def user_directory_path(instance,filename):
     return 'image/{0}/{1}.jpg'.format(instance.user_key,name)
 
 class Board(models.Model):
-    key=models.AutoField(db_column='key',primary_key=True)
-    title=models.CharField(db_column='title',max_length=100)
-    explain = models.CharField(db_column='explain', max_length=500)
-    user_key = models.IntegerField(db_column='user_key')
-    image = models.ImageField(db_column='image',upload_to=user_directory_path)
-    #result = models.ImageField(db_column='result')
-    date=models.DateTimeField(db_column='date')
-    views=models.IntegerField(db_column='views')
-    like = models.IntegerField(db_column='like')
-    disease = models.CharField(db_column='disease', max_length=100)
-    growth = models.CharField(db_column='growth', max_length=100)
-    is_delete=models.IntegerField(db_column='is_delete')
+    key=models.AutoField(primary_key=True)
+    title=models.CharField(max_length=100)
+    explain = models.CharField(max_length=500)
+    user_key = models.IntegerField()
+    image = models.ImageField(upload_to=user_directory_path)
+    result = models.ImageField(upload_to='',null=True)
+    date=models.DateTimeField(default=datetime.now)
+    views=models.IntegerField(default=0)
+    like = models.IntegerField(default=0)
+    disease = models.CharField(max_length=100,null=True)
+    growth = models.CharField(max_length=100,null=True)
+    is_delete=models.CharField(max_length=1,default='0')
 
     class Meta:
-        managed = False
+        managed = True
         db_table = "board"
 
     def __str__(self):
