@@ -9,6 +9,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
 import random, os
 
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import BoardSerializer
+from rest_framework import viewsets
+
+class BoardListAPI(viewsets.ModelViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
+
+
 # Create your views here.
 def home(request):
     context={}

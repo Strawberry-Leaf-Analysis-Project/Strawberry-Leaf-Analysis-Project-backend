@@ -10,5 +10,5 @@ urlpatterns = [
     path('board_newWrite',views.board_newWrite,name="board_newWrite"),
     path('board_detail/<int:key>/<int:flag>',views.board_detail,name="board_detail"),
     path('board_delete/<int:key>/<int:flag>',views.board_delete,name="board_delete"),
-    path('personal_board',views.personalBoard_home,name="personalBoard_home")
+    path('personal_board',views.personalBoard_home,name="personalBoard_home"),
 ] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
