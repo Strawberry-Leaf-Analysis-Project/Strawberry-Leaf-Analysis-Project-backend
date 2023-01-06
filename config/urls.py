@@ -29,7 +29,7 @@ router.register(r'board', board_views.BoardListAPI)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('board.urls')),
+    #path('', include('board.urls')),
     path('', include('member.urls')),
     path('api/',include(router.urls)),
 ]

@@ -18,6 +18,25 @@ class BoardListAPI(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
 
+    existQueryset = Board.objects.filter(is_delete='0')
+
+    def perform_create(self, serializer):
+        user=Member.objects.get(id=self.request.session['id'])
+        serializer.save(user=user)
+    '''
+    def create(self, request):
+        user=Member.objects.get(key=request.session['key'])
+        request.data['user']=user
+        serializer=self.get_serializer(data=request.data) #요청값->serializer
+
+        if serializer.is_valid(): #입력값이 serializer에서 설정한 유효성 검사를 통과했다면
+            serializer.save() #저장,is_valid 호출후 사용가능
+            return Response(serializer.data) #해당값을 반환해줌 보내줌
+        return Response(serializer.error) #is_valid 호출후에 사용가능
+    '''
+    def perform_destroy(self, instance):
+        instance.is_delete = '1'
+        instance.save()
 
 # Create your views here.
 def home(request):

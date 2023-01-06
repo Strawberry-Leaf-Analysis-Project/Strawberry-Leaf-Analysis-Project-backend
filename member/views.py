@@ -31,15 +31,9 @@ class MemberListAPI(viewsets.ModelViewSet):
             return Response(serializer.data) #해당값을 반환해줌 보내줌
         return Response(serializer.error) #is_valid 호출후에 사용가능
 
-    def delete(self,key=None):
-        user=self.queryset.filter(key=key)
-        if len(user)!=0:
-            for u in user:
-                u.is_delete="1"
-                u.save()
-            return Response({"message":"delete Complete"})
-        else:
-            return Response({"message":"the user is not exist"})
+    def perform_destroy(self, instance):
+        instance.is_delete='1'
+        instance.save()
 
     #삭제처리하지 않은 유저들의 리스트
     # member/consist_userList
@@ -101,10 +95,12 @@ class MemberListAPI(viewsets.ModelViewSet):
             for u in user:
                 if u.password==pwd:
                     request.session['key'] = u.key
+                    request.session['id'] = u.id
                     request.session['name'] = u.name
 
                     return Response({"message": "로그인 성공",
-                                     "key":u.key})
+                                     "key":u.key,
+                                     'id':request.session['id']})
         return Response({"message":"아이디나 비밀번호가 잘못되었습니다."})
 
     @csrf_exempt
@@ -112,10 +108,6 @@ class MemberListAPI(viewsets.ModelViewSet):
     def logout(self,request,pk=None):
         request.session.flush()
         return Response({"message":"정상적으로 로그아웃되었습니다."})
-
-
-
-
 
 
 
