@@ -24,7 +24,7 @@ class MemberListAPI(viewsets.ModelViewSet):
         exist=self.queryset.filter(id=request.data['id']) #id 중복 검사
 
         if len(exist) !=0:
-            return Response("same id user exist ")
+            return Response({"message":"same id user exist "})
         if serializer.is_valid(): #입력값이 serializer에서 설정한 유효성 검사를 통과했다면
             serializer.save() #저장,is_valid 호출후 사용가능
             return Response(serializer.data) #해당값을 반환해줌 보내줌
@@ -33,17 +33,21 @@ class MemberListAPI(viewsets.ModelViewSet):
     def delete(self,key=None):
         user=self.queryset.filter(key=key)
         if len(user)!=0:
-            user.delete()
-            return Response("delete Complete")
+            for u in user:
+                u.is_delete="1"
+                u.save()
+            return Response({"message":"delete Complete"})
         else:
-            return Response("the user is not exist")
+            return Response({"message":"the user is not exist"})
 
     #삭제처리하지 않은 유저들의 리스트
-    @action(detail=False, methods=['GET'])
+    # member/consist_userList
+    @action(detail=False, methods=['GET']) #애매하네..
     def consist_userList(self, request):
         serializer = self.get_serializer(self.existQueryset, many=True)  # 요청값->serializer
         return Response(serializer.data)
 
+    # member/{key}/change_password/?password={}&apaasword={}
     @action(detail=True,methods=['PATCH'])
     def change_password(self,request,pk=None):
         user=self.existQueryset.filter(key=pk)
@@ -61,6 +65,53 @@ class MemberListAPI(viewsets.ModelViewSet):
 
         serializer=self.get_serializer(user,many=True)
         return Response(serializer.data)
+
+    #member/{key}/change_name/?name={}
+    @action(detail=True, methods=['PATCH'])
+    def change_name(self, request, pk=None):
+        user = self.existQueryset.filter(key=pk)
+        name = request.data['name']
+
+        if name == '' :
+            return Response({"message":"빈칸을 채워주세요"})
+
+        for u in user:
+            u.name = name
+            u.save()
+
+        serializer = self.get_serializer(user, many=True)
+        return Response(serializer.data)
+
+    @csrf_exempt
+    @action(detail=False,methods=['POST'])
+    def login(self,request):
+        if 'key' in request.session:
+            return Response({"message":"이미 로그인 되어 있는 회원입니다."})
+
+        id=request.data['id']
+        pwd=request.data['password']
+
+        if id=='' or pwd=='':
+            return Response({"message":"빈칸을 채워주세요"})
+
+        user = self.existQueryset.filter(id=id)
+
+        if len(user) != 0 :
+            for u in user:
+                if u.password==pwd:
+                    request.session['key'] = u.key
+                    request.session['name'] = u.name
+
+                    return Response({"message": "로그인 성공",
+                                     "key":u.key})
+        return Response({"message":"아이디나 비밀번호가 잘못되었습니다."})
+
+    @csrf_exempt
+    @action(detail=True,methods=['POST'])
+    def logout(self,request,pk=None):
+        request.session.flush()
+        return Response({"message":"정상적으로 로그아웃되었습니다."})
+
 
 
 
