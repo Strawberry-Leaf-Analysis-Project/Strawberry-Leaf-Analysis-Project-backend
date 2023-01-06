@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import BoardSerializer
 from rest_framework import viewsets
+from rest_framework.decorators import action
 
 class BoardListAPI(viewsets.ModelViewSet):
     queryset = Board.objects.all()
@@ -37,6 +38,14 @@ class BoardListAPI(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.is_delete = '1'
         instance.save()
+
+    @action(detail=False,methods=['GET'])
+    def personal_board(self,request):
+        user = Member.objects.get(id=self.request.session['id'])
+        user_board=self.existQueryset.filter(user=user)
+
+        serializer=self.get_serializer(user_board,many=True)
+        return Response(serializer.data)
 
 # Create your views here.
 def home(request):
