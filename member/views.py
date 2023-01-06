@@ -27,6 +27,7 @@ class MemberListAPI(viewsets.ModelViewSet):
             return Response({"message":"same id user exist "})
         if serializer.is_valid(): #입력값이 serializer에서 설정한 유효성 검사를 통과했다면
             serializer.save() #저장,is_valid 호출후 사용가능
+            os.mkdir("media/image/" + str(request.data['id']))
             return Response(serializer.data) #해당값을 반환해줌 보내줌
         return Response(serializer.error) #is_valid 호출후에 사용가능
 
