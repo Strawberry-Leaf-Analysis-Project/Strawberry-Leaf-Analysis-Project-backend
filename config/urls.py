@@ -29,8 +29,6 @@ router.register(r'board', board_views.BoardListAPI)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('', include('board.urls')),
-    path('', include('member.urls')),
-    path('api/',include(router.urls)),
+    path('',include(router.urls)),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

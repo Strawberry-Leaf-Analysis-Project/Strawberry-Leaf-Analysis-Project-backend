@@ -21,6 +21,7 @@ class BoardListAPI(viewsets.ModelViewSet):
 
     existQueryset = Board.objects.filter(is_delete='0')
 
+    #[post] /board
     def perform_create(self, serializer):
         user=Member.objects.get(id=self.request.session['id'])
         serializer.save(user=user)
@@ -35,10 +36,14 @@ class BoardListAPI(viewsets.ModelViewSet):
             return Response(serializer.data) #해당값을 반환해줌 보내줌
         return Response(serializer.error) #is_valid 호출후에 사용가능
     '''
+
+    #[delete] board/{key}
     def perform_destroy(self, instance):
         instance.is_delete = '1'
         instance.save()
 
+    #해당 유저가 작성한 게시판 목록 반환
+    #[get] board/personal_board
     @action(detail=False,methods=['GET'])
     def personal_board(self,request):
         user = Member.objects.get(id=self.request.session['id'])
@@ -46,7 +51,7 @@ class BoardListAPI(viewsets.ModelViewSet):
 
         serializer=self.get_serializer(user_board,many=True)
         return Response(serializer.data)
-
+'''
 # Create your views here.
 def home(request):
     context={}
@@ -94,7 +99,9 @@ def board_newWrite(request):
     uploaded_file = request.FILES['ufile']
     flag=request.POST['flag']
 
-    '''
+  
+
+    
     이름 변경 및 저장(static 방식)
     user=Member.objects.get(key=userkey)
     name_date = str(datetime.datetime.today().year) + '_' + str(datetime.datetime.today().month) + '_' + str(
@@ -108,7 +115,9 @@ def board_newWrite(request):
     fs = FileSystemStorage(location='media/image/'+user.id)
 
     name = fs.save(name_new + name_ext, uploaded_file)
-    '''
+   
+
+    
     rows = Board.objects.create(title=atitle, explain=aexplain, image=uploaded_file,user_key=userkey,
                                 views='0',like='0',date=datetime.datetime.now(),is_delete='0')
 
@@ -149,3 +158,4 @@ def personalBoard_home(request):
 
     return render(request,"personalBoardForm.html",{
         'context':context,'rsBoard':rsBoard})
+'''

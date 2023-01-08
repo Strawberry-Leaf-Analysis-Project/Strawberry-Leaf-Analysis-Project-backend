@@ -77,6 +77,7 @@ class MemberListAPI(viewsets.ModelViewSet):
         serializer = self.get_serializer(user, many=True)
         return Response(serializer.data)
 
+    # member/login/?id={}&password={}
     @csrf_exempt
     @action(detail=False,methods=['POST'])
     def login(self,request):
@@ -103,15 +104,16 @@ class MemberListAPI(viewsets.ModelViewSet):
                                      'id':request.session['id']})
         return Response({"message":"아이디나 비밀번호가 잘못되었습니다."})
 
+    # member/logout
     @csrf_exempt
-    @action(detail=True,methods=['POST'])
-    def logout(self,request,pk=None):
+    @action(detail=False,methods=['POST'])
+    def logout(self,request):
         request.session.flush()
         return Response({"message":"정상적으로 로그아웃되었습니다."})
 
 
 
-
+'''
 def member_register(request):
     return render(request,"createMembersForm.html")
 
@@ -239,3 +241,4 @@ def member_changePassword(request):
     context['result_msg'] = '비밀번호가 변경되었습니다. 다시 로그인해주세요.'
 
     return JsonResponse(context, content_type="application/json")
+'''
