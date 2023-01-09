@@ -23,6 +23,15 @@ class BoardListAPI(viewsets.ModelViewSet):
         instance.is_delete = '1'
         instance.save()
 
+    #게시판 반환 , 이때 조회수 +1 처리
+    #[get] board/{key}
+    def retrieve(self, request, *args, **kwargs):
+        instance=self.get_object()
+        instance.views=instance.views+1
+        instance.save()
+        serializer=self.get_serializer(instance)
+        return Response(serializer.data)
+
     #해당 유저가 작성한 게시판 목록 반환
     #[get] board/personal_board
     @action(detail=False,methods=['GET'])
