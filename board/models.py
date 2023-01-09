@@ -1,4 +1,5 @@
 from datetime import datetime
+from pytz import timezone
 
 from django.db import models
 from member.models import Member
@@ -6,7 +7,10 @@ from member.models import Member
 def user_directory_path(instance,filename):
     name=instance.date.strftime("%Y-%m-%d-%H:%M:%S")+filename.split('.')[-1]
     return 'image/{0}/{1}.jpg'.format(instance.user.id,name)
-
+def koreaTime():
+    KST=timezone('Asia/Seoul')
+    now=datetime.now()
+    return now.astimezone(KST)
 class Board(models.Model):
     key=models.AutoField(primary_key=True)
     title=models.CharField(max_length=100)
