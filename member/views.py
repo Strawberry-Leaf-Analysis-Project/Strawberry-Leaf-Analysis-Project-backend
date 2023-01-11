@@ -125,3 +125,18 @@ class MemberListAPI(viewsets.ModelViewSet):
     def logout(self,request):
         request.session.flush()
         return Response({"message":"정상적으로 로그아웃되었습니다."})
+
+    #[post] member/password_check 회원가입시 or 비밀번호 변경시 비밀번호 2번 입력하고 확인하는 과정을 따로 기능으로 만듬
+    @action(detail=False,methods=['POST'])
+    def password_check(self,request):
+        pwd=request.data['password']
+        check_pwd=request.data['check_password']
+
+        if pwd=="" or check_pwd=="":
+            return Response({"flag": 0,
+                             "message": "빈칸을 채워주세요."})
+        if pwd!=check_pwd:
+            return Response({"flag": 0,
+                             "message": "두 비밀번호가 일치하지 않습니다."})
+        return Response({"flag": 1,
+                             "message": "비밀번호가 일치합니다."})
