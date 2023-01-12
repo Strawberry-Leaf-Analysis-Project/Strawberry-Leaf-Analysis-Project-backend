@@ -123,8 +123,10 @@ class MemberListAPI(viewsets.ModelViewSet):
     @csrf_exempt
     @action(detail=False,methods=['POST'])
     def logout(self,request):
+        response = Response({"message":"정상적으로 로그아웃되었습니다."})
+        response.delete_cookie('hit')
         request.session.flush()
-        return Response({"message":"정상적으로 로그아웃되었습니다."})
+        return response
 
     #[post] member/password_check 회원가입시 or 비밀번호 변경시 비밀번호 2번 입력하고 확인하는 과정을 따로 기능으로 만듬
     @action(detail=False,methods=['POST'])
