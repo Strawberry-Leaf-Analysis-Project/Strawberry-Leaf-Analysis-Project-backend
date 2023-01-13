@@ -109,9 +109,11 @@ class MemberListAPI(viewsets.ModelViewSet):
             request.session['id'] = user.id
             request.session['name'] = user.name
 
+
             return Response({"message": "로그인 성공",
                              "key": user.key,
-                             'id': user.id})
+                             'id': user.id
+                             })
 
         except Member.DoesNotExist:
             return Response({"message": "아이디나 비밀번호가 잘못되었습니다."})
