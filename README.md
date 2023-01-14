@@ -21,6 +21,8 @@ git clone https://github.com/Strawberry-Leaf-Analysis-Project/Strawberry-Leaf-An
 
 ## 업데이트 내역
 
+* 0.1.6
+  * 수정: 검색기능 쿼리스트링으로 받게끔 수정
 * 0.1.5
   * 추가: 게시물 검색 기능
 * 0.1.4
