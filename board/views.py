@@ -97,7 +97,7 @@ class BoardListAPI(viewsets.ModelViewSet):
         data=request.query_params.get('search')
         print(data)
 
-        search_user=Member.objects.filter(name__icontains=data)
+        search_user=Member.objects.filter(id__icontains=data)
 
 
         search_board = self.existQueryset.filter(title__icontains=data)
