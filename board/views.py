@@ -91,15 +91,20 @@ class BoardListAPI(viewsets.ModelViewSet):
         serializer = self.get_serializer(date_board, many=True)
         return Response(serializer.data)
 
-    # [get] board/search  param(search="검색값")
+    # [get] board/search
     @action(detail=False, methods=['GET'])
     def search(self,request):
-        try:
-            search_user=Member.objects.get(name__icontains=request.data['search'])
-            search_board = self.existQueryset.filter(title__icontains=request.data['search'])|\
-                           self.existQueryset.filter(user=search_user)
-        except Member.DoesNotExist:
-            search_board = self.existQueryset.filter(title__icontains=request.data['search'])
+        data=request.query_params.get('search')
+        print(data)
+
+        search_user=Member.objects.filter(name__icontains=data)
+
+
+        search_board = self.existQueryset.filter(title__icontains=data)
+
+        for user in search_user:
+            search_board=search_board|self.existQueryset.filter(user=user)
+
         serializer = self.get_serializer(search_board, many=True)
 
         return Response(serializer.data)
