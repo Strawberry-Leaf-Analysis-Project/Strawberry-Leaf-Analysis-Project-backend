@@ -49,7 +49,6 @@ git clone https://github.com/Strawberry-Leaf-Analysis-Project/Strawberry-Leaf-An
 
 참여자: shin5774 – babo5774mith@gmail.com
 
-
 <!-- Markdown link & img dfn's -->
 [npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/datadog-metrics

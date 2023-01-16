@@ -1,4 +1,4 @@
-import datetime
+import datetime, os
 
 from board.models import Board
 from member.models import Member
@@ -20,6 +20,10 @@ class BoardListAPI(viewsets.ModelViewSet):
     #[post] /board
     def perform_create(self, serializer):
         user=Member.objects.get(id=self.request.session['id'])
+        '''
+        사용자별 게시물 개수를 파악하면 좋을거 같기도하고.. or 게시물의 키값 사용?
+        os.mkdir("media/image/"+user.id+"/"+{게시물 수or board의 key})
+        '''
         serializer.save(user=user)
 
     #[delete] board/{key}
@@ -95,11 +99,8 @@ class BoardListAPI(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def search(self,request):
         data=request.query_params.get('search')
-        print(data)
 
         search_user=Member.objects.filter(id__icontains=data)
-
-
         search_board = self.existQueryset.filter(title__icontains=data)
 
         for user in search_user:
