@@ -7,15 +7,11 @@ from django.conf import settings
 from rest_framework import routers
 from board import views as board_views
 from member import views as member_views
-import models.urls
-
-router = routers.DefaultRouter()
-router.register(r'member', member_views.MemberListAPI)
-router.register(r'board', board_views.BoardListAPI)
+from models import views as models_views
+from models.views import Train,Predict
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',include(router.urls)),
-    path('models/',include(models.urls)),
+    path('train/',Train.as_view(),name="train"),
+    path('predict/',Predict.as_view(),name="predict"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
