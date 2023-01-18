@@ -10,6 +10,7 @@ class Member(models.Model):
     name = models.CharField(max_length=150)
     is_staff = models.CharField(max_length=1,default='0')
     is_delete=models.CharField(max_length=1,default='0')
+    email=models.EmailField(max_length=256,default='0')
 
     class Meta:
         managed = True

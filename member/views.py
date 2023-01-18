@@ -26,11 +26,15 @@ class MemberListAPI(viewsets.ModelViewSet):
         if len(exist) !=0:
             return Response({"message":"same id user exist "})
 
+        if request.data['email']=='':
+            return Response({"message":"이메일이 안들어옴"})
+
         pwd_hash = self.ph.hash(request.data['password'])
 
         context['id'] = request.data['id']
         context['password'] = pwd_hash
         context['name'] = request.data['name']
+        context['email']=request.data['email']
 
         serializer = self.get_serializer(data=context)  # 요청값->serializer
 
