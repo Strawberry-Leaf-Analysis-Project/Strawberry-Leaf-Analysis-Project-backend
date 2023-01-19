@@ -110,4 +110,25 @@ class BoardListAPI(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    # [patch] board/{key}/change_board/?title={}&explain={}
+    # 유저 비번 바꾸는거랑 동일한 방식으로 보내면 됨
+    @action(detail=True,methods=['PATCH'])
+    def change_board(self,request,pk=None):
+        board=self.existQueryset.get(key=pk)
+        title=request.data['title']
+        explain=request.data['explain']
+
+        if title=='':
+            return Response({"message":"제목을 입력해주세요"})
+
+        if explain=='':
+            return Response({"message": "내용을 입력해주세요"})
+
+        board.title=title
+        board.explain=explain
+        board.save()
+
+        serializer=self.get_serializer(board)
+        return Response(serializer.data)
+
 
