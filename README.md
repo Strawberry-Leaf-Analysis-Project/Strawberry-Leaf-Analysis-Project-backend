@@ -21,6 +21,8 @@ git clone https://github.com/Strawberry-Leaf-Analysis-Project/Strawberry-Leaf-An
 
 ## 업데이트 내역
 
+* 0.2.0
+  * 추가: 데이터베이스 구조변경에 따른 기능
 * 0.1.7
   * 추가: 게시물 수정(제목,내용) 기능
 * 0.1.6
