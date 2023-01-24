@@ -3,14 +3,12 @@ from django.db import models
 # Create your models here.
 
 class Member(models.Model):
-    key=models.AutoField(primary_key=True)
-    id=models.CharField(max_length=50)
-    password = models.CharField(max_length=150)
-    visited = models.CharField(max_length=1,default='0')
+    id=models.CharField(primary_key=True,max_length=50)
+    password = models.CharField(max_length=150,null=False)
     name = models.CharField(max_length=150)
     is_staff = models.CharField(max_length=1,default='0')
     is_delete=models.CharField(max_length=1,default='0')
-    email=models.EmailField(max_length=256,default='0')
+    email=models.EmailField(max_length=256,null=False)
 
     class Meta:
         managed = True

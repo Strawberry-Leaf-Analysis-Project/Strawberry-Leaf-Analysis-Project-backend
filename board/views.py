@@ -2,7 +2,7 @@ import datetime, os
 
 from board.models import Board
 from member.models import Member
-
+from plants_group.models import PlantsGroup
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db import transaction
@@ -17,14 +17,12 @@ class BoardListAPI(viewsets.ModelViewSet):
 
     existQueryset = Board.objects.filter(is_delete='0')
 
+    #작물 그룹을 어떤걸로 넘겨줄지 의논이 필요함(id 또는 이름) 현재 코드는 이름을 받는걸로
     #[post] /board
     def perform_create(self, serializer):
         user=Member.objects.get(id=self.request.session['id'])
-        '''
-        사용자별 게시물 개수를 파악하면 좋을거 같기도하고.. or 게시물의 키값 사용?
-        os.mkdir("media/image/"+user.id+"/"+{게시물 수or board의 key})
-        '''
-        serializer.save(user=user)
+        group=PlantsGroup.objects.get(user=user,name=self.request.data['group_name'])
+        serializer.save(user=user,plant_group=group)
 
     #[delete] board/{key}
     def perform_destroy(self, instance):
@@ -114,7 +112,7 @@ class BoardListAPI(viewsets.ModelViewSet):
     # 유저 비번 바꾸는거랑 동일한 방식으로 보내면 됨
     @action(detail=True,methods=['PATCH'])
     def change_board(self,request,pk=None):
-        board=self.existQueryset.get(key=pk)
+        board=self.existQueryset.get(id=pk)
         title=request.data['title']
         explain=request.data['explain']
 

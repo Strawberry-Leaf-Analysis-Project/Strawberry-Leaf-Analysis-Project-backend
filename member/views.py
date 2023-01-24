@@ -48,7 +48,7 @@ class MemberListAPI(viewsets.ModelViewSet):
         instance.is_delete='1'
         instance.save()
 
-    #삭제처리하지 않은 유저들의 리스트
+    #삭제처리하지 않은 유저들의 리스트(수정 필요 & 굳이 있어야할 필요가 있는지)
     # member/consist_userList
     @action(detail=False, methods=['GET']) #애매하네..
     def consist_userList(self, request):
@@ -58,7 +58,7 @@ class MemberListAPI(viewsets.ModelViewSet):
     # member/{key}/change_password/?password={}&apaasword={}
     @action(detail=True,methods=['PATCH'])
     def change_password(self,request,pk=None):
-        user=self.existQueryset.filter(key=pk)
+        user=self.existQueryset.filter(id=pk)
         pwd=request.data['password']
         apwd = request.data['apassword']
 
@@ -78,7 +78,7 @@ class MemberListAPI(viewsets.ModelViewSet):
     #member/{key}/change_name/?name={}
     @action(detail=True, methods=['PATCH'])
     def change_name(self, request, pk=None):
-        user = self.existQueryset.filter(key=pk)
+        user = self.existQueryset.filter(id=pk)
         name = request.data['name']
 
         if name == '' :
@@ -95,7 +95,7 @@ class MemberListAPI(viewsets.ModelViewSet):
     @csrf_exempt
     @action(detail=False,methods=['POST'])
     def login(self,request):
-        if 'key' in request.session:
+        if 'id' in request.session:
             return Response({"message":"이미 로그인 되어 있는 회원입니다."})
 
         id=request.data['id']
@@ -109,14 +109,12 @@ class MemberListAPI(viewsets.ModelViewSet):
 
             self.ph.verify(user.password,pwd)
 
-            request.session['key'] = user.key
             request.session['id'] = user.id
             request.session['name'] = user.name
 
-
             return Response({"message": "로그인 성공",
-                             "key": user.key,
-                             'id': user.id
+                             'id': user.id,
+                             'name':user.name,
                              })
 
         except Member.DoesNotExist:

@@ -54,6 +54,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'board',
     'member',
+    'disease',
+    'plants_by_disease',
+    'plants_detail',
+    'plants_group',
     'models',
 
 ]

@@ -7,11 +7,20 @@ from django.conf import settings
 from rest_framework import routers
 from board import views as board_views
 from member import views as member_views
+from disease import views as disease_views
+from plants_detail import views as plants_detail_views
+from plants_by_disease import views as plants_by_disease_views
+from plants_group import views as plants_group_views
+
 import models.urls
 
 router = routers.DefaultRouter()
 router.register(r'member', member_views.MemberListAPI)
 router.register(r'board', board_views.BoardListAPI)
+router.register(r'disease', disease_views.DiseaseListAPI)
+router.register(r'plants_detail', plants_detail_views.PlantsDetailListAPI)
+router.register(r'plants_by_disease', plants_by_disease_views.PlantsByDiseaseListAPI)
+router.register(r'plants_group', plants_group_views.PlantsGroupListAPI)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
