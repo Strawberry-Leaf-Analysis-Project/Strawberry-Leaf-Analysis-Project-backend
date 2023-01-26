@@ -22,6 +22,8 @@ class BoardListAPI(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user=Member.objects.get(id=self.request.session['id'])
         group=PlantsGroup.objects.get(user=user,name=self.request.data['group_name'])
+        user.board_cnt = user.board_cnt + 1
+        user.save()
         serializer.save(user=user,plant_group=group)
         #
         #
@@ -133,5 +135,38 @@ class BoardListAPI(viewsets.ModelViewSet):
 
         serializer=self.get_serializer(board)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'])
+    def input_image(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid()
+        self.perform_create(serializer)
+        return Response(serializer.data)
+
+    # input_image 함수에서 반환해준 id를 전달받는다는 가정하에 진행함
+    @action(detail=False,methods=['POST'])
+    def output_image(self,request):
+        board=Board.objects.get(id=request.data['id'])
+        input_file_path='media/image/{0}/{1}/{2}/'.format(board.user.id,board.plant_group.name,board.user.board_cnt)
+        #파일명:input_image.jpg
+        print(input_file_path)
+        #이후 세그멘테이션 함수를 넣어 진행하면될듯 여기서 함수 반환값을 박싱된 이미지를 주면 될듯
+        #segment_func():이 함수에서 이파리 좌표값 넣은 텍스트파일(?)은 알아서 저장해야할듯?
+
+        #opencvimage to PILIMage and save output_image(fileField)
+        #board.save()
+        return Response()
+
+
+    #게시판의 최종 저장 및 이파리 별 저장(이전 의논 B part 가 돌아갈 함수)
+    @action(detail=False, methods=['POST'])
+    def write_board(self, request):
+        board = Board.objects.get(id=request.data['id'])
+        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
+        # 파일명:input_image.jpg
+        #잎의 개수를 게시판 데베에 저장
+        #이파리 판단 함수(여기서 detail 데베를 저장하는것을 동시에 해야할듯)
+
+        return Response()
 
 

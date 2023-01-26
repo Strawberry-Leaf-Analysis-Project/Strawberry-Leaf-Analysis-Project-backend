@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from member.models import Member
 from plants_group.models import PlantsGroup
@@ -12,9 +13,24 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
     queryset = PlantsGroup.objects.all()
     serializer_class = PlantsGroupSerializer
 
+    def create(self, request):
+        context={}
+        str_date=request.data['date']
+        date=datetime.strptime(str_date,"%Y-%m-%d")
+        context['date']=date
+        context['name']=request.data['name']
+        context['status']=request.data['status']
+
+        serializer=self.get_serializer(data=context)
+
+        serializer.is_valid()
+        self.perform_create(serializer)
+
+        return Response(serializer.data)
+
     #[post] /plants_group
     def perform_create(self,serializer):
-        user=Member.objects.get(id=self.request.session['id'])
+        user=Member.objects.get(id=self.request.data['id'])
         os.mkdir("media/image/" + user.id + "/" + self.request.data['name'])
         serializer.save(user=user) 
 

@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     'plants_detail',
     'plants_group',
     'models',
-    'temp_image',
+   #'temp_image',
 ]
 
 MIDDLEWARE = [
@@ -106,7 +106,6 @@ DATABASES = {
         "PORT": "3307",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
