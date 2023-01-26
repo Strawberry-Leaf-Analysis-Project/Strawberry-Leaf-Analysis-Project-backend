@@ -23,6 +23,11 @@ class BoardListAPI(viewsets.ModelViewSet):
         user=Member.objects.get(id=self.request.session['id'])
         group=PlantsGroup.objects.get(user=user,name=self.request.data['group_name'])
         serializer.save(user=user,plant_group=group)
+        #
+        #
+        #
+        #output
+        #board.get id,
 
     #[delete] board/{key}
     def perform_destroy(self, instance):

@@ -62,4 +62,11 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
         serializer = self.get_serializer(plants)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['GET'])
+    def user_list(self, request):
+        user = Member.objects.get(id=request.data['id'])
+        user_group=PlantsGroup.objects.filter(user=user)
+
+        serializer=self.get_serializer(user_group,many=True)
+        return Response(serializer.data)
 
