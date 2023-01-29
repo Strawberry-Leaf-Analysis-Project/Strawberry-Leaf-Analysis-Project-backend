@@ -19,7 +19,7 @@ class PlantsDetailListAPI(viewsets.ModelViewSet):
     #필요값: id:게시판 id
     #[post] /plants_detail
     def perform_create(self, serializer):
-        board=Board.objects.get(id=self.request.data['id'])
+        board=Board.objects.get(id=self.request.data['board_id'])
         serializer.save(board=board)
 
     #삭제 처리안됨

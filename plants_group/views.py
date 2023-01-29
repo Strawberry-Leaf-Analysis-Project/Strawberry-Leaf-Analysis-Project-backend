@@ -30,7 +30,7 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
 
     #[post] /plants_group
     def perform_create(self,serializer):
-        user=Member.objects.get(id=self.request.data['id'])
+        user=Member.objects.get(id=self.request.session['id'])
         os.mkdir("media/image/" + user.id + "/" + self.request.data['name'])
         serializer.save(user=user) 
 
@@ -80,7 +80,7 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def user_list(self, request):
-        user = Member.objects.get(id=request.data['id'])
+        user = Member.objects.get(id=request.session['id'])
         user_group=PlantsGroup.objects.filter(user=user)
 
         serializer=self.get_serializer(user_group,many=True)

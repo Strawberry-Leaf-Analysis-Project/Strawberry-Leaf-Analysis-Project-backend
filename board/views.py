@@ -1,5 +1,6 @@
 import datetime, os
 
+import static.test
 from board.models import Board
 from member.models import Member
 from plants_group.models import PlantsGroup
@@ -25,11 +26,6 @@ class BoardListAPI(viewsets.ModelViewSet):
         user.board_cnt = user.board_cnt + 1
         user.save()
         serializer.save(user=user,plant_group=group)
-        #
-        #
-        #
-        #output
-        #board.get id,
 
     #[delete] board/{key}
     def perform_destroy(self, instance):
@@ -115,7 +111,6 @@ class BoardListAPI(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    # [patch] board/{key}/change_board/?title={}&explain={}
     # 유저 비번 바꾸는거랑 동일한 방식으로 보내면 됨
     @action(detail=True,methods=['PATCH'])
     def change_board(self,request,pk=None):
@@ -146,10 +141,15 @@ class BoardListAPI(viewsets.ModelViewSet):
     # input_image 함수에서 반환해준 id를 전달받는다는 가정하에 진행함
     @action(detail=False,methods=['POST'])
     def output_image(self,request):
-        board=Board.objects.get(id=request.data['id'])
-        input_file_path='media/image/{0}/{1}/{2}/'.format(board.user.id,board.plant_group.name,board.user.board_cnt)
-        #파일명:input_image.jpg
-        print(input_file_path)
+        #아래 필터 걸때 user도 같이 걸어야할듯
+        user=Member.objects.get(id=request.session['id'])
+        board = Board.objects.get(output_image__exact='',user=user)
+        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
+        # 파일명:input_image.jpg
+
+
+        static.test.testprint()
+
         #이후 세그멘테이션 함수를 넣어 진행하면될듯 여기서 함수 반환값을 박싱된 이미지를 주면 될듯
         #segment_func():이 함수에서 이파리 좌표값 넣은 텍스트파일(?)은 알아서 저장해야할듯?
 
