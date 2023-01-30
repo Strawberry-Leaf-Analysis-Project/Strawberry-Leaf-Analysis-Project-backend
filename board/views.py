@@ -1,9 +1,17 @@
 import datetime, os
 
-import static.test
+from django.core.files.base import ContentFile
+
+import static.strawberry
+import static.txt_to_seperate
+import static.leaf_vision
+
+import cv2
 from board.models import Board
 from member.models import Member
 from plants_group.models import PlantsGroup
+from plants_detail.models import PlantsDetail
+from plants_detail.views import PlantsDetailListAPI
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db import transaction
@@ -146,27 +154,52 @@ class BoardListAPI(viewsets.ModelViewSet):
         board = Board.objects.get(output_image__exact='',user=user)
         input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
         # 파일명:input_image.jpg
+        weights = "static/mask_rcnn_balloon_0010.h5"
+        output_img=static.strawberry.segmentation(weights,input_file_path)
+        output_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2RGB)
+        #user = Member.objects.get(id=request.data['id'])
 
+        os.remove(os.path.join(input_file_path,'output_image.jpg'))
+        ret, buf = cv2.imencode('.jpg', output_img)
+        content = ContentFile(buf.tobytes())
 
-        static.test.testprint()
+        board.output_image.save('output_image.jpg',content)
 
-        #이후 세그멘테이션 함수를 넣어 진행하면될듯 여기서 함수 반환값을 박싱된 이미지를 주면 될듯
-        #segment_func():이 함수에서 이파리 좌표값 넣은 텍스트파일(?)은 알아서 저장해야할듯?
+        serializer = self.get_serializer(board)
 
-        #opencvimage to PILIMage and save output_image(fileField)
-        #board.save()
-        return Response()
-
+        return Response(serializer.data)
 
     #게시판의 최종 저장 및 이파리 별 저장(이전 의논 B part 가 돌아갈 함수)
     @action(detail=False, methods=['POST'])
     def write_board(self, request):
+        context={}
         board = Board.objects.get(id=request.data['id'])
         input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
         # 파일명:input_image.jpg
+        N = static.txt_to_seperate.txt_to_seperate(input_file_path)
         #잎의 개수를 게시판 데베에 저장
-        #이파리 판단 함수(여기서 detail 데베를 저장하는것을 동시에 해야할듯)
+        average_color = static.leaf_vision.plants_leaves(input_file_path,N)
+        for i in range(N):
+            leaf_path = os.path.join(input_file_path, "leaf_{0}.jpg".format(i + 1))
+            leaf, state = static.leaf_vision.leaf_classification(leaf_path, average_color)  # average_color 뒤에 퍼센트를 임의로 부여하면 5프로 보다 적거나 많게 설정 가능
 
+            if state == 0:
+                context['state']='0'
+            else:
+                context['state']='1'
+
+            os.remove(leaf_path)
+            leaf = cv2.cvtColor(leaf, cv2.COLOR_BGR2RGB)
+            ret, buf = cv2.imencode('.jpg', leaf)
+            content = ContentFile(buf.tobytes())
+
+            p_detail = PlantsDetail()
+            p_detail.board=board
+            p_detail.is_disease=context['state']
+            p_detail.leaf_image.save("leaf_{0}.jpg".format(i + 1), content)
+            p_detail.save()
+        #이파리 판단 함수(여기서 detail 데베를 저장하는것을 동시에 해야할듯)
+            #pSerializer=PlantsDetailListAPI.get_serializer(p_detail)
         return Response()
 
 

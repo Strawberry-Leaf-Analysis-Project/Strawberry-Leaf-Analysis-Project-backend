@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'plants_detail',
     'plants_group',
     'models',
-   #'temp_image',
 ]
 
 MIDDLEWARE = [
