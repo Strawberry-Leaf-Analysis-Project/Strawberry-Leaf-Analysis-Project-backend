@@ -7,7 +7,7 @@ import static.txt_to_seperate
 import static.leaf_vision
 
 import cv2
-from board.models import Board
+from board.models import Boardg
 from member.models import Member
 from plants_group.models import PlantsGroup
 from plants_detail.models import PlantsDetail
@@ -141,9 +141,24 @@ class BoardListAPI(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def input_image(self, request):
-        serializer = self.get_serializer(data=request.data)
+        try :
+            user = Member.objects.get(id=request.session['id'])
+            group = PlantsGroup.objects.get(name=request.data['group_name'])
+            board=Board.objects.get(user=user,title__exact=None,plant_group=group)
+        except Board.DoesNotExist:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid()
+            self.perform_create(serializer)
+            return Response(serializer.data)
+        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
+        os.remove(os.path.join(input_file_path, 'input_image.jpg'))
+        os.remove(os.path.join(input_file_path, 'output_image.jpg'))
+        os.remove(os.path.join(input_file_path, 'leaves_information.txt'))
+
+        board.input_image = request.data['input_image']
+        board.save()
+        serializer = self.get_serializer(data=board)
         serializer.is_valid()
-        self.perform_create(serializer)
         return Response(serializer.data)
 
     # input_image 함수에서 반환해준 id를 전달받는다는 가정하에 진행함
@@ -151,7 +166,8 @@ class BoardListAPI(viewsets.ModelViewSet):
     def output_image(self,request):
         #아래 필터 걸때 user도 같이 걸어야할듯
         user=Member.objects.get(id=request.session['id'])
-        board = Board.objects.get(output_image__exact='',user=user)
+        group=PlantsGroup.objects.get(name=request.data['group_name'])
+        board = Board.objects.get(title__exact=None,user=user,plant_group=group)
         input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
         # 파일명:input_image.jpg
         weights = "static/mask_rcnn_balloon_0010.h5"
@@ -174,9 +190,15 @@ class BoardListAPI(viewsets.ModelViewSet):
     def write_board(self, request):
         context={}
         board = Board.objects.get(id=request.data['id'])
+        board.title=request.data['title']
+        board.explain=request.data['explain']
+
         input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
         # 파일명:input_image.jpg
         N = static.txt_to_seperate.txt_to_seperate(input_file_path)
+        board.leaf_cnt=N
+        board.save()
+
         #잎의 개수를 게시판 데베에 저장
         average_color = static.leaf_vision.plants_leaves(input_file_path,N)
         for i in range(N):
@@ -195,7 +217,7 @@ class BoardListAPI(viewsets.ModelViewSet):
 
             p_detail = PlantsDetail()
             p_detail.board=board
-            p_detail.is_disease=context['state']
+            p_detail.is_disease=context['state']    
             p_detail.leaf_image.save("leaf_{0}.jpg".format(i + 1), content)
             p_detail.save()
         #이파리 판단 함수(여기서 detail 데베를 저장하는것을 동시에 해야할듯)
