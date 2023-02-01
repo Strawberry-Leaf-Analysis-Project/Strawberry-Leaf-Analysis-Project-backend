@@ -7,15 +7,15 @@ from plants_group.models import PlantsGroup
 #이미지 저장 경로 지정 함수
 def user_directory_path(instance,filename):
     name='input_image.jpg'
-    return 'image/{0}/{1}/{2}/{3}'.format(instance.user.id,instance.plant_group.name,instance.user.board_cnt,name)
+    return 'image/{0}/{1}/{2}/{3}'.format(instance.user.id,instance.plant_group.name,instance.plant_group.board_cnt,name)
 
 def user_directory_path_input(instance,filename):
     name='input_image.jpg'
-    return 'image/{0}/{1}/{2}/{3}'.format(instance.user.id,instance.plant_group.name,instance.user.board_cnt,name)
+    return 'image/{0}/{1}/{2}/{3}'.format(instance.user.id,instance.plant_group.name,instance.plant_group.board_cnt,name)
 
 def user_directory_path_output(instance,filename):
     name='output_image.jpg'
-    return 'image/{0}/{1}/{2}/{3}'.format(instance.user.id,instance.plant_group.name,instance.user.board_cnt,name)
+    return 'image/{0}/{1}/{2}/{3}'.format(instance.user.id,instance.plant_group.name,instance.plant_group.board_cnt,name)
 
 class Board(models.Model):
     id=models.AutoField(primary_key=True)

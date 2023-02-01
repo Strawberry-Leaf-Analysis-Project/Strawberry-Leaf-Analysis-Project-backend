@@ -7,7 +7,7 @@ import static.txt_to_seperate
 import static.leaf_vision
 
 import cv2
-from board.models import Boardg
+from board.models import Board
 from member.models import Member
 from plants_group.models import PlantsGroup
 from plants_detail.models import PlantsDetail
@@ -31,8 +31,8 @@ class BoardListAPI(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user=Member.objects.get(id=self.request.session['id'])
         group=PlantsGroup.objects.get(user=user,name=self.request.data['group_name'])
-        user.board_cnt = user.board_cnt + 1
-        user.save()
+        group.board_cnt = group.board_cnt + 1
+        group.save()
         serializer.save(user=user,plant_group=group)
 
     #[delete] board/{key}
@@ -150,7 +150,7 @@ class BoardListAPI(viewsets.ModelViewSet):
             serializer.is_valid()
             self.perform_create(serializer)
             return Response(serializer.data)
-        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
+        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.plant_group.board_cnt)
         os.remove(os.path.join(input_file_path, 'input_image.jpg'))
         os.remove(os.path.join(input_file_path, 'output_image.jpg'))
         os.remove(os.path.join(input_file_path, 'leaves_information.txt'))
@@ -168,7 +168,7 @@ class BoardListAPI(viewsets.ModelViewSet):
         user=Member.objects.get(id=request.session['id'])
         group=PlantsGroup.objects.get(name=request.data['group_name'])
         board = Board.objects.get(title__exact=None,user=user,plant_group=group)
-        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
+        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.plant_group.board_cnt)
         # 파일명:input_image.jpg
         weights = "static/mask_rcnn_balloon_0010.h5"
         output_img=static.strawberry.segmentation(weights,input_file_path)

@@ -4,7 +4,7 @@ from django.db import models
 from board.models import Board
 #이미지 저장 경로 지정 함수(변경필요)
 def user_directory_path(instance,filename):
-    return 'image/{0}/{1}/{2}/{3}.jpg'.format(instance.board.user.id,instance.board.plant_group.name,instance.board.user.board_cnt,filename)
+    return 'image/{0}/{1}/{2}/{3}.jpg'.format(instance.board.user.id,instance.board.plant_group.name,instance.board.plant_group.board_cnt,filename)
 
 class PlantsDetail(models.Model):
     id=models.AutoField(primary_key=True)
