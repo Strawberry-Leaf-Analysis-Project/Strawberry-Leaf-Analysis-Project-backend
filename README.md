@@ -7,7 +7,7 @@
 부분 입니다.
 
 ## Using
-<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white">
+<img src="https://img.shields.io/badge/Python--ver3.6.8-3776AB?style=for-the-badge&logo=Python&logoColor=white">
 <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=Django&logoColor=white">
 <img src="https://img.shields.io/badge/Pycharm-000000?style=for-the-badge&logo=Pycharm&logoColor=white">
 
@@ -16,11 +16,14 @@
 윈도우:
 
 ```sh
-git clone https://github.com/Strawberry-Leaf-Analysis-Project/Strawberry-Leaf-Analysis-Project-backend.git 
+1. git clone https://github.com/Strawberry-Leaf-Analysis-Project/Strawberry-Leaf-Analysis-Project-backend.git 
+2. pip instal -r requirements.txt
 ```
 
 ## 업데이트 내역
 
+* 0.3.0ㅎ
+  * 추가: AI 모델 도입을 통한 게시물 이미지(작물 이파리) 분석 기능
 * 0.2.0
   * 추가: 데이터베이스 구조변경에 따른 기능
 * 0.1.7
@@ -29,8 +32,7 @@ git clone https://github.com/Strawberry-Leaf-Analysis-Project/Strawberry-Leaf-An
   * 수정: 검색기능 쿼리스트링으로 받게끔 수정
 * 0.1.5
   * 추가: 게시물 검색 기능
-* 0.1.4
-  * 추가: 조회수의 무분별한 증가를 방지하는 기능 
+* 0.1.4  * 추가: 조회수의 무분별한 증가를 방지하는 기능 
 * 0.1.3
   * 추가: 비밀번호 저장시 DB에 암호화된 상태로 저장
 * 0.1.2
