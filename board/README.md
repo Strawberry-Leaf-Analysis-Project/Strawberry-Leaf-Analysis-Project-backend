@@ -19,8 +19,8 @@
 반환값: 없음  
 
 
-3. [get] board/{key}/ \
-기능: 게시파 조회 기능(정확히는 db 값 반환) \
+3. [get] board/{id}/ \
+기능: 게시물 조회 기능(정확히는 db 값 반환) \
 필요값: 없음 \
 반환값: 게시판 db값(model 인자 전부,조회수 +1 되어서) 
 
@@ -55,7 +55,7 @@
 반환값: 검색한 내용(아이디,제목)이 포함된 게시물 리스트
 
 
-9. [patch] board/change_board/ \
+9. [patch] board/{id}/change_board/ \
 기능: 게시물의 제목과 내용을 변경하는 기능  \
 필요값: title,explain \
 반환값: 변경이 완료된 게시물의 db값(model 인자 전부)
@@ -77,3 +77,9 @@
 기능: 최종적으로 게시물을 작성하며 동시에 이파리 db도 저장하는 기능  \
 필요값: title,explain,group_name \
 반환값: 게시물의 db값(model 인자 전부)
+
+
+13. [patch] board/{id}/push_like/ \
+기능: 게시물의 좋아요수를 증감시키는 기능  \
+필요값: is_pushed:문자,0:증가,1:감소 \
+반환값: 좋아요값의 변경이 완료된 게시물의 db값(model 인자 전부)
