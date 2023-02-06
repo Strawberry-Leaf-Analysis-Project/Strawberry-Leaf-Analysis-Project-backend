@@ -63,17 +63,17 @@
 
 10. [post] board/input_image/ \
 기능: 게시물의 input_image를 넣는 기능  \
-필요값: input_image \
+필요값: input_image,group_name(그룹 이름) \
 반환값: 게시물의 db값(model 인자 전부) =>기대값: input_image만 들어간 db값
 
 
-11. [post] board/output_image/  (현재 미완성) \  
+11. [post] board/output_image/ \
 기능: input_image의 segmentation 결과를 output_image를 넣는 기능  \
-필요값: 없음 \
+필요값: group_name(그룹 이름) \
 반환값: 게시물의 db값(model 인자 전부) =>기대값: output_image도 들어간 db값
 
 
-12. [post] board/write_board/  (현재 미완성) \  
+12. [post] board/write_board/  
 기능: 최종적으로 게시물을 작성하며 동시에 이파리 db도 저장하는 기능  \
 필요값: title,explain,group_name \
 반환값: 게시물의 db값(model 인자 전부)
