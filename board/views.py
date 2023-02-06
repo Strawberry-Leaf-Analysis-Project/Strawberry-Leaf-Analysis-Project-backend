@@ -224,4 +224,18 @@ class BoardListAPI(viewsets.ModelViewSet):
             #pSerializer=PlantsDetailListAPI.get_serializer(p_detail)
         return Response()
 
+    @action(detail=True, methods=['PATCH'])
+    def push_like(self, request, pk=None):
+        board = self.existQueryset.get(id=pk)
+        is_pushed=request.data['is_pushed']
+
+        if is_pushed == '0':
+            board.likes=board.likes+1
+        else:
+            board.likes=board.likes-1
+
+        board.save()
+
+        serializer = self.get_serializer(board)
+        return Response(serializer.data)
 
