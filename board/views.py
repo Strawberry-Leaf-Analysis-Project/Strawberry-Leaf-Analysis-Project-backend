@@ -83,7 +83,7 @@ class BoardListAPI(viewsets.ModelViewSet):
     # [get] board/like_board
     @action(detail=False,methods=['GET'])
     def like_board(self,request):
-        like_board=self.existQueryset.order_by('-like')
+        like_board=self.existQueryset.order_by('-likes')
 
         serializer = self.get_serializer(like_board, many=True)
         return Response(serializer.data)
@@ -193,7 +193,7 @@ class BoardListAPI(viewsets.ModelViewSet):
         board.title=request.data['title']
         board.explain=request.data['explain']
 
-        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.user.board_cnt)
+        input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.plant_group.board_cnt)
         # 파일명:input_image.jpg
         N = static.txt_to_seperate.txt_to_seperate(input_file_path)
         board.leaf_cnt=N
