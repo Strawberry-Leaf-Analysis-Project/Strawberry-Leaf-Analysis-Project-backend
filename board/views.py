@@ -217,11 +217,11 @@ class BoardListAPI(viewsets.ModelViewSet):
 
             p_detail = PlantsDetail()
             p_detail.board=board
-            p_detail.is_disease=context['state']    
+            p_detail.is_disease=context['state']
             p_detail.leaf_image.save("leaf_{0}.jpg".format(i + 1), content)
             p_detail.save()
         #이파리 판단 함수(여기서 detail 데베를 저장하는것을 동시에 해야할듯)
-            #pSerializer=PlantsDetailListAPI.get_serializer(p_detail)
+        #pSerializer=PlantsDetailListAPI.get_serializer(p_detail)
         return Response()
 
     @action(detail=True, methods=['PATCH'])
@@ -237,5 +237,15 @@ class BoardListAPI(viewsets.ModelViewSet):
         board.save()
 
         serializer = self.get_serializer(board)
+        return Response(serializer.data)\
+
+    @action(detail=False, methods=['GET'])
+    def group_board_list(self, request):
+        group = PlantsGroup.objects.get(name=request.data['name'])
+        user = Member.objects.get(id=request.session['id'])
+
+        group_name_list = Board.objects.filter(user=user, plant_group=group)
+
+        serializer = self.get_serializer(group_name_list, many=True)
         return Response(serializer.data)
 
