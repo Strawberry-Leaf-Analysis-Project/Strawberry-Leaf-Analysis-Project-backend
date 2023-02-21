@@ -23,13 +23,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 secret_file=os.path.join(BASE_DIR,'secrets.json')
+database_file=os.path.join(BASE_DIR,'database.json')
 
 with open(secret_file) as f:
     secrets=json.loads(f.read())
 
+with open(database_file) as f:
+    database=json.loads(f.read())
+
 def get_secret(setting,secrets=secrets):
     try:
         return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+def get_database(setting,database=database):
+    try:
+        return database[setting]
     except KeyError:
         error_msg = "Set the {} environment variable".format(setting)
         raise ImproperlyConfigured(error_msg)
@@ -98,11 +109,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "sanhak",
-        "USER": "root",
-        "PASSWORD": "9302",
-        "HOST": "127.0.0.1",
-        "PORT": "3307",
+        "NAME": get_database("NAME"),
+        "USER": get_database("USER"),
+        "PASSWORD": get_database("PASSWORD"),
+        "HOST": get_database("HOST"),
+        "PORT": get_database("PORT"),
     }
 }
 

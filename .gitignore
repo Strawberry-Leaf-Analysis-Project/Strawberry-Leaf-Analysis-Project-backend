@@ -8,6 +8,7 @@ db.sqlite3
 db.sqlite3-journal
 media
 secrets.json
+database.json
 # Data files and directories common in repo root
 datasets/
 logs/
