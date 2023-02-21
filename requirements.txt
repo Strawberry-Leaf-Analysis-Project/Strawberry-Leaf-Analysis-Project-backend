@@ -5,7 +5,7 @@ argon2-cffi
 opencv-contrib-python==4.5.3.56
 opencv-python==4.6.0.66
 pillow
-numpyg
+numpy
 scipy
 cython
 matplotlib
