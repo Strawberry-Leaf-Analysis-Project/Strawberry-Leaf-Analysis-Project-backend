@@ -5,8 +5,10 @@ from django.core.files.base import ContentFile
 import static.strawberry
 import static.txt_to_seperate
 import static.leaf_vision
+import static.classification_leaves
 
 import cv2
+from skimage import io
 from board.models import Board
 from member.models import Member
 from plants_group.models import PlantsGroup
@@ -20,6 +22,9 @@ from rest_framework.response import Response
 from .serializers import BoardSerializer
 from rest_framework import viewsets,status
 from rest_framework.decorators import action
+
+# mask_rcnn=static.strawberry.segmentation("static/mask_rcnn_balloon_0010.h5")
+leaf_classification = static.classification_leaves.Load_ResNet_Model("static/leaf_classification_model.pth")
 
 class BoardListAPI(viewsets.ModelViewSet):
     queryset = Board.objects.all()
@@ -179,8 +184,12 @@ class BoardListAPI(viewsets.ModelViewSet):
         board = Board.objects.get(title__exact=None,user=user,plant_group=group)
         input_file_path = 'media/image/{0}/{1}/{2}/'.format(board.user.id, board.plant_group.name, board.plant_group.board_cnt)
         # 파일명:input_image.jpg
-        weights = "static/mask_rcnn_balloon_0010.h5"
-        output_img=static.strawberry.segmentation(weights,input_file_path)
+
+        # output_img=static.strawberry.segmentation(weights,input_file_path)
+        mask_rcnn = static.strawberry.segmentation("static/mask_rcnn_balloon_0010.h5")
+        output_img = static.strawberry.detect_and_color_splash(mask_rcnn, input_file_path)
+        if len(output_img) == 1:
+            print("object not detect")
         output_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2RGB)
         #user = Member.objects.get(id=request.data['id'])
 
@@ -208,13 +217,15 @@ class BoardListAPI(viewsets.ModelViewSet):
         board.leaf_cnt=N
         board.save()
 
-        #잎의 개수를 게시판 데베에 저장
-        average_color = static.leaf_vision.plants_leaves(input_file_path,N)
+        # 각 이파리별로 상태를 0, 1로 나타낸다
+        classification_result = static.classification_leaves.classification(leaf_classification, N, input_file_path)
+
         for i in range(N):
             leaf_path = os.path.join(input_file_path, "leaf_{0}.jpg".format(i + 1))
-            leaf, state = static.leaf_vision.leaf_classification(leaf_path, average_color)  # average_color 뒤에 퍼센트를 임의로 부여하면 5프로 보다 적거나 많게 설정 가능
+            leaf_image = io.imread(leaf_path)
+            leaf = cv2.cvtColor(leaf_image, cv2.COLOR_BGR2RGB)
 
-            if state == 0:
+            if classification_result[i] == 0 :
                 context['state']='0'
             else:
                 context['state']='1'

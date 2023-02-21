@@ -281,19 +281,11 @@ if __name__ == '__main__':
     elif args.command == "splash":
         output_img = detect_and_color_splash(model, image_path=args.image)
 
-
-
-
-def segmentation(weights, image_path):
+def segmentation(weights):
     '''
     weights = 가중치 파일의 경로
-    image_path = 이미지 파일 './plants/'가 들어갈 예정
-
-    결과로 output이미지가 리턴되고 해당 디렉토리에 output이미지와 이파리 바운딩 정봉들이 들어가게 된다
     '''
     class InferenceConfig(StrawberryConfig):
-            # Set batch size to 1 since we'll be running inference on
-            # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
         GPU_COUNT = 1
         IMAGES_PER_GPU = 1
     config = InferenceConfig()
@@ -302,5 +294,4 @@ def segmentation(weights, image_path):
     weights_path = weights
 
     model.load_weights(weights_path, by_name=True)
-    output_img = detect_and_color_splash(model, image_path)
-    return output_img
+    return model
