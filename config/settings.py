@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'plants_detail',
     'plants_group',
     'models',
+    'board_like_by_user',
 ]
 
 MIDDLEWARE = [

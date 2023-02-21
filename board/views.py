@@ -11,6 +11,7 @@ from board.models import Board
 from member.models import Member
 from plants_group.models import PlantsGroup
 from plants_detail.models import PlantsDetail
+from board_like_by_user.models import BoardLikeByUser
 from plants_detail.views import PlantsDetailListAPI
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -47,8 +48,16 @@ class BoardListAPI(viewsets.ModelViewSet):
         tomorrow=datetime.datetime.replace(timezone.datetime.now(),hour=23,minute=59,second=0)
         expires=datetime.datetime.strftime(tomorrow,"%a, %d-%b-%Y %H:%M:%S KST")
 
+        user = Member.objects.get(id=request.session['id'])
+        user_like = BoardLikeByUser.objects.filter(board=instance, member=user,is_delete='0')
+
+        if len(user_like) == 0:
+            likes = 0
+        else:
+            likes = 1
+
         serializer =self.get_serializer(instance)
-        response=Response(serializer.data,status=status.HTTP_200_OK)
+        response=Response({'is_like':likes,'data':serializer.data},status=status.HTTP_200_OK)
 
         if request.COOKIES.get('hit') is not None:
             cookies=request.COOKIES.get('hit')
@@ -58,13 +67,13 @@ class BoardListAPI(viewsets.ModelViewSet):
                     instance.views+=1
                     instance.save()
                 serializer = self.get_serializer(instance)
-                response = Response(serializer.data, status=status.HTTP_200_OK)
+                response = Response({'is_like':likes,'data':serializer.data}, status=status.HTTP_200_OK)
                 response.set_cookie('hit', cookies + f'|{pk}', expires=expires)
         else:
             instance.views+=1
             instance.save()
             serializer = self.get_serializer(instance)
-            response = Response(serializer.data, status=status.HTTP_200_OK)
+            response = Response({'is_like':likes,'data':serializer.data}, status=status.HTTP_200_OK)
             response.set_cookie('hit', pk, expires=expires)
 
         return response
@@ -227,13 +236,23 @@ class BoardListAPI(viewsets.ModelViewSet):
     @action(detail=True, methods=['PATCH'])
     def push_like(self, request, pk=None):
         board = self.existQueryset.get(id=pk)
+        user = Member.objects.get(id=request.session['id'])
         is_pushed=request.data['is_pushed']
 
         if is_pushed == '0':
             board.likes=board.likes+1
+            m_likes=BoardLikeByUser.objects.filter(board=board, member=user)
+
+            if len(m_likes) ==0:
+                likes=BoardLikeByUser(board=board, member=user)
+            else:
+                likes=BoardLikeByUser.objects.filter(board=board, member=user)
         else:
             board.likes=board.likes-1
+            likes=BoardLikeByUser.objects.get(board=board, member=user)
+            likes.is_delete='1'
 
+        likes.save()
         board.save()
 
         serializer = self.get_serializer(board)

@@ -11,7 +11,7 @@ from disease import views as disease_views
 from plants_detail import views as plants_detail_views
 from plants_by_disease import views as plants_by_disease_views
 from plants_group import views as plants_group_views
-#from temp_image import views as temp_image_views
+from board_like_by_user import views as board_like_by_user_views
 import models.urls
 
 router = routers.DefaultRouter()
@@ -21,6 +21,7 @@ router.register(r'disease', disease_views.DiseaseListAPI)
 router.register(r'plants_detail', plants_detail_views.PlantsDetailListAPI)
 router.register(r'plants_by_disease', plants_by_disease_views.PlantsByDiseaseListAPI)
 router.register(r'plants_group', plants_group_views.PlantsGroupListAPI)
+router.register(r'board_like_by_user',board_like_by_user_views.BoardLikeByUserListAPI)
 #router.register(r'temp_image',temp_image_views.TempImageListAPI)
 urlpatterns = [
     path('admin/', admin.site.urls),
