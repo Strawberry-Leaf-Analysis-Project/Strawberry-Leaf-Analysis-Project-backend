@@ -13,12 +13,18 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
     queryset = PlantsGroup.objects.all()
     serializer_class = PlantsGroupSerializer
 
-    def create(self, request):
+    def ㅎㅑcreate(self, request):
         context={}
+        context['name'] = request.data['name']
+        user=Member.objects.get(id=request.session['id'])
+        dupl_name=self.queryset.filter(user=user,name=context['name'])
+
+        if len(dupl_name) !=0:
+            return Response({"message":"동일한 이름의 작물이 있습니다. 다른 이름을 등록해주세요"})
+
         str_date=request.data['date']
         date=datetime.strptime(str_date,"%Y-%m-%d")
         context['date']=date
-        context['name']=request.data['name']
         context['status']=request.data['status']
 
         serializer=self.get_serializer(data=context)

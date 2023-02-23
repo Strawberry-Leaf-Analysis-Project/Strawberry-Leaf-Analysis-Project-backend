@@ -23,7 +23,7 @@ from .serializers import BoardSerializer
 from rest_framework import viewsets,status
 from rest_framework.decorators import action
 
-# mask_rcnn=static.strawberry.segmentation("static/mask_rcnn_balloon_0010.h5")
+#mask_rcnn=static.strawberry.segmentation("static/mask_rcnn_balloon_0010.h5")
 leaf_classification = static.classification_leaves.Load_ResNet_Model("static/leaf_classification_model.pth")
 
 class BoardListAPI(viewsets.ModelViewSet):
@@ -189,7 +189,9 @@ class BoardListAPI(viewsets.ModelViewSet):
         mask_rcnn = static.strawberry.segmentation("static/mask_rcnn_balloon_0010.h5")
         output_img = static.strawberry.detect_and_color_splash(mask_rcnn, input_file_path)
         if len(output_img) == 1:
-            print("object not detect")
+            board.output_image=board.input_image
+            board.save()
+            return Response({"success":"fail","msg":"잎이 감지되지 않습니다."})
         output_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2RGB)
         #user = Member.objects.get(id=request.data['id'])
 
@@ -267,15 +269,16 @@ class BoardListAPI(viewsets.ModelViewSet):
         board.save()
 
         serializer = self.get_serializer(board)
-        return Response(serializer.data)\
+        return Response(serializer.data)
 
     @action(detail=False, methods=['GET'])
     def group_board_list(self, request):
-        group = PlantsGroup.objects.get(name=request.data['name'])
+        name=request.query_params.get('name')
         user = Member.objects.get(id=request.session['id'])
+        group = PlantsGroup.objects.get(name=name,user=user)
 
-        group_name_list = Board.objects.filter(user=user, plant_group=group)
+        group_name_list = self.existQueryset.filter(plant_group=group)
 
         serializer = self.get_serializer(group_name_list, many=True)
-        return Response(serializer.data)
 
+        return Response(serializer.data)
