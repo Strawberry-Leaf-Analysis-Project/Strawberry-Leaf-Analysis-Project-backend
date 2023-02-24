@@ -30,6 +30,7 @@ import json
 import datetime
 import numpy as np
 import skimage.draw
+import keras.backend as K
 
 # Root directory of the project -> Mask_RCNN
 ROOT_DIR = os.path.abspath("../")
@@ -294,4 +295,5 @@ def segmentation(weights):
     weights_path = weights
 
     model.load_weights(weights_path, by_name=True)
+    K.clear_session()
     return model
