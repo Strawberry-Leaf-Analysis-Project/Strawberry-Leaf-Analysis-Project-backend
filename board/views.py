@@ -195,7 +195,7 @@ class BoardListAPI(viewsets.ModelViewSet):
             open(os.path.join(input_file_path,'output_image.jpg'),'w')
             open(os.path.join(input_file_path,'leaves_information.txt'),'w')
 
-            return Response({"success":"fail","msg":"잎이 감지되지 않습니다."})
+            return Response({"success":False,"msg":"잎이 감지되지 않습니다."})
         output_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2RGB)
         #user = Member.objects.get(id=request.data['id'])
 
