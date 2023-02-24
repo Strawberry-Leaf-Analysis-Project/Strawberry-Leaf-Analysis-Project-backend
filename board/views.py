@@ -259,7 +259,8 @@ class BoardListAPI(viewsets.ModelViewSet):
             if len(m_likes) ==0:
                 likes=BoardLikeByUser(board=board, member=user)
             else:
-                likes=BoardLikeByUser.objects.filter(board=board, member=user)
+                likes=BoardLikeByUser.objects.get(board=board, member=user)
+                likes.is_delete='0'
         else:
             board.likes=board.likes-1
             likes=BoardLikeByUser.objects.get(board=board, member=user)
