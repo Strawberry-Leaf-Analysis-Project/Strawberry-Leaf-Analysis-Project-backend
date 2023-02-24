@@ -4,7 +4,7 @@ import cv2
 from skimage import io
 
 def check_true(str):
-    return str=="True"
+    return str=="1"
 
 def background_remove(image, mask):
     for c in range(3):
@@ -52,10 +52,3 @@ def txt_to_seperate(dir_path):
 
     f.close()
     return N
-
-
-'''
-사용 가이드 라인
-1. txt_to_seperate(dir_path) 실헹
-2. 디렉토리에있는 텍스트파일을 기반으로 이미지 생성
-'''

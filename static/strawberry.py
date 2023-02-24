@@ -186,9 +186,9 @@ def detect_and_color_splash(model, image_path=None):
         r = results
         labels_to_names = {0: 'BG', 1: 'strawberry'}
         class_names = [value for value in labels_to_names.values()]
-        output_img = visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
+        output_img, state = visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
                                     class_names, image_path)
-        return output_img
+        return output_img, state
 
 ############################################################
 #  Training

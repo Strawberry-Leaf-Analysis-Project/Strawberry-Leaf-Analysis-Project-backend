@@ -187,10 +187,14 @@ class BoardListAPI(viewsets.ModelViewSet):
 
         # output_img=static.strawberry.segmentation(weights,input_file_path)
         mask_rcnn = static.strawberry.segmentation("static/mask_rcnn_balloon_0010.h5")
-        output_img = static.strawberry.detect_and_color_splash(mask_rcnn, input_file_path)
-        if len(output_img) == 1:
+        output_img, state = static.strawberry.detect_and_color_splash(mask_rcnn, input_file_path) #status 변수 추가해 이벤트 컨트롤
+        if state == 0:
             board.output_image=board.input_image
             board.save()
+
+            open(os.path.join(input_file_path,'output_image.jpg'),'w')
+            open(os.path.join(input_file_path,'leaves_information.txt'),'w')
+
             return Response({"success":"fail","msg":"잎이 감지되지 않습니다."})
         output_img = cv2.cvtColor(output_img, cv2.COLOR_BGR2RGB)
         #user = Member.objects.get(id=request.data['id'])

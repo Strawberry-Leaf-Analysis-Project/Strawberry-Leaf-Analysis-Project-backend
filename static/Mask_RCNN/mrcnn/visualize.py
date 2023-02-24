@@ -102,7 +102,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     # Number of instances
     N = boxes.shape[0]
     if not N:
-        return 0
+        return 0, 0
     else:
         assert boxes.shape[0] == masks.shape[-1] == class_ids.shape[0]
 
@@ -167,12 +167,16 @@ def display_instances(image, boxes, masks, class_ids, class_names,
         mask = masks[y1:y2, x1:x2, i]
         f.write("{0} {1} {2} {3}\n".format(y1,x1,y2,x2))
         for j in range(y2-y1):
-            f.write(' '.join(str(i) for i in mask[j]))
+            for k in mask[j]:
+                if str(k) == 'False':
+                    f.write("0 ")
+                else:
+                    f.write("1 ")
             f.write("\n")
 
     f.close()
     # 세그멘테이션 결과로 아웃풋 이미지를 리턴한다
-    return output_img
+    return output_img, 1
 
 def display_differences(image,
                         gt_box, gt_class_id, gt_mask,
