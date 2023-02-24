@@ -28,6 +28,16 @@ class PlantsDetailListAPI(viewsets.ModelViewSet):
         #instance.is_delete = '1'
         instance.save()
 
+    @action(detail=False, methods=['GET'])
+    def disease_leaves(self, request):
+        b_id = request.query_params.get('board_id')
+        board=Board.objects.get(id=b_id)
+        leaves=PlantsDetail.objects.filter(board=board,is_disease='1')
+
+        serializer=self.get_serializer(leaves,many=True)
+        return Response(serializer.data)
+
+
 
 
 

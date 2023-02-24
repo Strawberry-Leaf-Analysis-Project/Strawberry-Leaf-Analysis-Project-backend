@@ -224,7 +224,9 @@ class BoardListAPI(viewsets.ModelViewSet):
         board.save()
 
         # 각 이파리별로 상태를 0, 1로 나타낸다
+
         classification_result = static.classification_leaves.classification(leaf_classification, N, input_file_path)
+        is_disease=False
 
         for i in range(N):
             leaf_path = os.path.join(input_file_path, "leaf_{0}.jpg".format(i + 1))
@@ -235,6 +237,7 @@ class BoardListAPI(viewsets.ModelViewSet):
                 context['state']='0'
             else:
                 context['state']='1'
+                is_disease=True
 
             os.remove(leaf_path)
             leaf = cv2.cvtColor(leaf, cv2.COLOR_BGR2RGB)
@@ -246,9 +249,11 @@ class BoardListAPI(viewsets.ModelViewSet):
             p_detail.is_disease=context['state']
             p_detail.leaf_image.save("leaf_{0}.jpg".format(i + 1), content)
             p_detail.save()
-        #이파리 판단 함수(여기서 detail 데베를 저장하는것을 동시에 해야할듯)
-        #pSerializer=PlantsDetailListAPI.get_serializer(p_detail)
-        return Response()
+
+        if is_disease:
+            Response({"disease":True,"msg":"질병이 감지되었습니다."})
+
+        return Response({"disease":False,"msg":"질병이 없습니다."})
 
     @action(detail=True, methods=['PATCH'])
     def push_like(self, request, pk=None):

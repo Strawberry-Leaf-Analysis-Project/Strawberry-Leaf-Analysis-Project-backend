@@ -13,7 +13,7 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
     queryset = PlantsGroup.objects.all()
     serializer_class = PlantsGroupSerializer
 
-    def ㅎㅑcreate(self, request):
+    def create(self, request):
         context={}
         context['name'] = request.data['name']
         user=Member.objects.get(id=request.session['id'])
@@ -91,4 +91,5 @@ class PlantsGroupListAPI(viewsets.ModelViewSet):
 
         serializer=self.get_serializer(user_group,many=True)
         return Response(serializer.data)
+
 
